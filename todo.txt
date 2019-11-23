@@ -1,0 +1,4 @@
+* extract file related actions of main into function.
+* access input from command line.
+* give function reference of total beverages count as the value of key total.
+* remove govinda date testing. 
