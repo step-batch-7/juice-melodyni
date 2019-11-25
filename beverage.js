@@ -1,33 +1,40 @@
 "use strict";
 let fs = require("fs");
-const save = require("./src/beverageLib").save;
+const saveTransaction = require("./src/beverageLib").saveTransaction;
+const query = require("./src/beverageLib").query;
+const getPaired = require("./src/utilities").getPaired;
+const getValue = require("./src/utilities").getValue;
+const displayForSave = require("./src/beverageLib").displayForSave;
 
-const main = function() {
+const loadBeverageLogs = function() {
   let doesFileExists = fs.existsSync("./logs.json");
   if (!doesFileExists) {
-    fs.writeFileSync("./logs.json", "{}", "utf8");
+    return {};
   }
   let file = fs.readFileSync("./logs.json", "utf8");
-  let data = [
-    "--save",
-    "--beverage",
-    "watermelon",
-    "--empID",
-    "9999",
-    "--qty",
-    "1"
-  ];
-  let commands = { "--save": save, "--query": "query" };
-
-  let userCmd = commands[data[0]];
-  let beverageName = data[2];
-  let empID = data[4];
-  let qty = Number(data[6]);
-
   let beverageLogs = JSON.parse(file);
+  return beverageLogs;
+};
+
+const main = function() {
+  let userArg = process.argv.slice(2);
+  let operationArg = userArg.slice(1);
+  let optionWithArg = operationArg.reduce(getPaired, []);
+
+  let commands = { "--save": saveTransaction, "--query": query };
+  let display = { "--save": displayForSave, "--query": "displayForQuery" };
+
+  let userCmd = commands[userArg[0]];
+  let displayTransaction = display[userArg[0]];
+  let beverageName = getValue(optionWithArg, "--beverage");
+  let empID = getValue(optionWithArg, "--empID");
+  let qty = Number(getValue(optionWithArg, "--qty"));
+  let beverageLogs = loadBeverageLogs();
+
   beverageLogs = userCmd(beverageLogs, empID, beverageName, qty);
-  fs.writeFileSync("./logs.json", JSON.stringify(beverageLogs), "utf8");
+  //let transactionStatus = displayTransaction(beverageLogs, empID);
   console.log("Anna Juice Ltd");
+  console.log(beverageLogs);
 };
 
 main();

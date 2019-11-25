@@ -1,4 +1,9 @@
-* extract file related actions of main into function.
-* access input from command line.
-* give function reference of total beverages count as the value of key total.
-* remove govinda date testing. 
+✔ extract file related actions of main into function.
+✔ write function for calculating total beverage count.
+✔ write query function.
+✔ access input from command line.
+✔ write display function for save.
+* write display function for query.
+* write mock test for file related functions.
+* remove govinda date testing.
+* validate input  
