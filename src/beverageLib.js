@@ -1,13 +1,22 @@
 "use strict";
+const fs = require("fs");
+const getPaired = require("./utilities").getPaired;
+const getValue = require("./utilities").getValue;
 
 const writeOnToFile = function(path, beverageLogs) {
   fs.writeFileSync(path, JSON.stringify(beverageLogs), "utf8");
 };
 
-const fs = require("fs");
-const saveTransaction = function(beverageLogs, empID, beverageName, qty) {
-  let entryTime = new Date();
-  let newOrder = { beverage: beverageName, quantity: qty, time: entryTime };
+const parseArg = function(optionWithArg) {
+  let newOrder = {};
+  newOrder["beverage"] = getValue(optionWithArg, "--beverage");
+  newOrder["quantity"] = Number(getValue(optionWithArg, "--qty"));
+  return newOrder;
+};
+
+const saveTransaction = function(beverageLogs, empID, newOrder) {
+  let orderEntrydate = new Date();
+  newOrder["date"] = orderEntrydate;
   if (!beverageLogs.hasOwnProperty(empID)) {
     beverageLogs[empID] = { orders: [] };
   }
@@ -35,22 +44,23 @@ const add = function(totalQuantity, order) {
 
 const displayForSave = function(beverageLogs, empID) {
   let status = "Transaction Recorded:";
-  let title = "EmployeeID, Beverage, Quantity, Date";
-  let ordersFeild = beverageLogs[empID]["orders"][0];
+  let title = "EmployeeID, Beverage, Quantity, date";
+  let ordersfields = beverageLogs[empID]["orders"][0];
   let detail =
     empID +
     ", " +
-    ordersFeild["beverage"] +
+    ordersfields["beverage"] +
     ", " +
-    ordersFeild["quantity"] +
+    ordersfields["quantity"] +
     ", " +
-    ordersFeild["time"];
+    ordersfields["date"];
   let transactionStatus = status + "\n" + title + "\n" + detail;
   return transactionStatus;
 };
 
 exports.saveTransaction = saveTransaction;
 exports.query = query;
+exports.parseArg = parseArg;
 exports.getTotalBeverageCount = getTotalBeverageCount;
 exports.displayForSave = displayForSave;
 //exports.displayForQuery = displayForQuery;
