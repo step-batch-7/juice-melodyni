@@ -25,7 +25,7 @@ const saveTransaction = function(beverageLogs, empID, newOrder) {
   return beverageLogs;
 };
 
-const query = function(beverageLogs, empID) {
+const fetchTransaction = function(beverageLogs, empID) {
   let empTransactions = beverageLogs[empID]["orders"];
   let totalOrderedBeverage = getTotalBeverageCount(empTransactions);
   empTransactions.push(totalOrderedBeverage);
@@ -46,21 +46,34 @@ const displayForSave = function(beverageLogs, empID) {
   let status = "Transaction Recorded:";
   let title = "EmployeeID, Beverage, Quantity, date";
   let ordersfields = beverageLogs[empID]["orders"][0];
-  let detail =
-    empID +
-    ", " +
-    ordersfields["beverage"] +
-    ", " +
-    ordersfields["quantity"] +
-    ", " +
-    ordersfields["date"];
-  let transactionStatus = status + "\n" + title + "\n" + detail;
+  let transactionDetail = [
+    empID,
+    ordersfields["beverage"],
+    ordersfields["quantity"],
+    ordersfields["date"]
+  ].join(",");
+  let transactionStatus = [status, title, transactionDetail].join("\n");
   return transactionStatus;
 };
 
+const convertToString = function(empID) {
+  return function(order) {
+    return [empID, order.beverage, order.quantity, order.date].join(",");
+  };
+};
+
+const displayForQuery = function(empBeverageLogs, empID) {
+  let title = "EmployeeID, Beverage, Quantity, date";
+  let totalCount = empBeverageLogs.pop();
+  let totalJuiceMessage = ["Total:", totalCount, "Juices"].join(" ");
+  let transactionDetail = empBeverageLogs.map(convertToString(empID));
+  let transactions = transactionDetail.join("\n");
+  let transactionStatus = [title, transactions, totalJuiceMessage].join("\n");
+  return transactionStatus;
+};
 exports.saveTransaction = saveTransaction;
-exports.query = query;
+exports.fetchTransaction = fetchTransaction;
 exports.parseArg = parseArg;
 exports.getTotalBeverageCount = getTotalBeverageCount;
 exports.displayForSave = displayForSave;
-//exports.displayForQuery = displayForQuery;
+exports.displayForQuery = displayForQuery;

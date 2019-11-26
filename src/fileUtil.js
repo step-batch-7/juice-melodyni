@@ -1,4 +1,5 @@
 "use strict";
+const fs = require("fs");
 
 const loadBeverageLogs = function() {
   let doesFileExists = fs.existsSync("./logs.json");

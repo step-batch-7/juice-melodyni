@@ -2,10 +2,11 @@
 const assert = require("assert");
 let file = "../src/beverageLib";
 const saveTransaction = require(file).saveTransaction;
-const query = require(file).query;
+const fetchTransaction = require(file).fetchTransaction;
 const getTotalBeverageCount = require(file).getTotalBeverageCount;
 const getdate = require(file).getdate;
 const displayForSave = require(file).displayForSave;
+const displayForQuery = require(file).displayForQuery;
 const parseArg = require(file).parseArg;
 
 describe("parseArg", function() {
@@ -82,7 +83,7 @@ describe("getTotalBeverageCount", function() {
   });
 });
 
-describe("query", function() {
+describe("fetchTransaction", function() {
   it("should give order and totalBeverageCount details of given employee", function() {
     let logs = {
       123: {
@@ -103,7 +104,7 @@ describe("query", function() {
       { beverage: "watermelon", quantity: 1, date: "1:12" },
       3
     ];
-    let actual = query(logs, 123);
+    let actual = fetchTransaction(logs, 123);
     assert.deepStrictEqual(actual, expected);
   });
 });
@@ -119,15 +120,29 @@ describe("displayForSave", function() {
     let status = "Transaction Recorded:";
     let title = "EmployeeID, Beverage, Quantity, date";
     let ordersfields = logs["123"]["orders"][0];
-    let detail =
-      "123" +
-      ", " +
-      ordersfields["beverage"] +
-      ", " +
-      ordersfields["quantity"] +
-      ", " +
-      ordersfields["date"];
-    let expected = status + "\n" + title + "\n" + detail;
+    let detail = [
+      "123",
+      ordersfields["beverage"],
+      ordersfields["quantity"],
+      ordersfields["date"]
+    ].join(",");
+    let expected = [status, title, detail].join("\n");
+    assert.strictEqual(actual, expected);
+  });
+});
+
+describe("displayForQuery", function() {
+  it("should display all transactions of given employee with total beverage count", function() {
+    let orderList = [
+      { beverage: "orange", quantity: 1, date: "11:00" },
+      { beverage: "watermelon", quantity: 2, date: "12:34" },
+      3
+    ];
+    let actual = displayForQuery(orderList, 123);
+    let title = "EmployeeID, Beverage, Quantity, date";
+    let transactions = "123,orange,1,11:00\n123,watermelon,2,12:34";
+    let totalJuiceMessage = ["Total:", 3, "Juices"].join(" ");
+    let expected = [title, transactions, totalJuiceMessage].join("\n");
     assert.strictEqual(actual, expected);
   });
 });
