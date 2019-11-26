@@ -1,6 +1,7 @@
 "use strict";
 const assert = require("assert");
 let file = "../src/beverageLib";
+let mockDate = new Date();
 const saveTransaction = require(file).saveTransaction;
 const fetchTransaction = require(file).fetchTransaction;
 const getTotalBeverageCount = require(file).getTotalBeverageCount;
@@ -30,14 +31,14 @@ describe("saveTransaction", function() {
       beverage: "orange",
       quantity: 1
     };
-    let actual = saveTransaction({}, 111, newOrder);
+    let actual = saveTransaction({}, 111, newOrder, mockDate);
     let expected = {
       111: {
         orders: [
           {
             beverage: "orange",
             quantity: 1,
-            date: actual["111"].orders[0]["date"]
+            date: mockDate
           }
         ]
       }
@@ -54,7 +55,7 @@ describe("saveTransaction", function() {
       beverage: "watermelon",
       quantity: 2
     };
-    let actual = saveTransaction(existingoperationArg, 123, newOrder);
+    let actual = saveTransaction(existingoperationArg, 123, newOrder, mockDate);
     let expected = {
       123: {
         orders: [
@@ -62,7 +63,7 @@ describe("saveTransaction", function() {
           {
             beverage: "watermelon",
             quantity: 2,
-            date: actual["123"]["orders"][1]["date"]
+            date: mockDate
           }
         ]
       }
@@ -110,7 +111,7 @@ describe("fetchTransaction", function() {
 });
 
 describe("displayForSave", function() {
-  it("should return fieldss in string", function() {
+  it("should return order fields in string", function() {
     let logs = {
       "123": {
         orders: [{ beverage: "orange", quantity: 1, date: "11:00" }]

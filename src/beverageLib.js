@@ -14,9 +14,8 @@ const parseArg = function(optionWithArg) {
   return newOrder;
 };
 
-const saveTransaction = function(beverageLogs, empID, newOrder) {
-  let orderEntrydate = new Date();
-  newOrder["date"] = orderEntrydate;
+const saveTransaction = function(beverageLogs, empID, newOrder, date) {
+  newOrder["date"] = date;
   if (!beverageLogs.hasOwnProperty(empID)) {
     beverageLogs[empID] = { orders: [] };
   }

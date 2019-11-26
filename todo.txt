@@ -3,7 +3,7 @@
 ✔ write query function.
 ✔ access input from command line.
 ✔ write display function for save.
-* write display function for query.
+✔ write display function for query.
+✔ remove govinda date testing.
 * write mock test for file related functions.
-* remove govinda date testing.
 * validate input  
