@@ -2,10 +2,7 @@
 const fs = require("fs");
 const getPaired = require("./utilities").getPaired;
 const getValue = require("./utilities").getValue;
-
-const writeOnToFile = function(path, beverageLogs) {
-  fs.writeFileSync(path, JSON.stringify(beverageLogs), "utf8");
-};
+const writeOnToFile = require("./fileUtil").writeOnToFile;
 
 const parseArg = function(optionWithArg) {
   let newOrder = {};
@@ -14,18 +11,18 @@ const parseArg = function(optionWithArg) {
   return newOrder;
 };
 
-const saveTransaction = function(beverageLogs, empID, newOrder, date) {
+const saveTransaction = function(beverageRecords, empID, newOrder, date) {
   newOrder["date"] = date;
-  if (!beverageLogs.hasOwnProperty(empID)) {
-    beverageLogs[empID] = { orders: [] };
+  if (!beverageRecords.hasOwnProperty(empID)) {
+    beverageRecords[empID] = { orders: [] };
   }
-  beverageLogs[empID]["orders"].push(newOrder);
-  writeOnToFile("./logs.json", beverageLogs);
-  return beverageLogs;
+  beverageRecords[empID]["orders"].push(newOrder);
+  writeOnToFile("./logs.json", beverageRecords);
+  return beverageRecords;
 };
 
-const fetchTransaction = function(beverageLogs, empID) {
-  let empTransactions = beverageLogs[empID]["orders"];
+const fetchTransaction = function(beverageRecords, empID) {
+  let empTransactions = beverageRecords[empID]["orders"];
   let totalOrderedBeverage = getTotalBeverageCount(empTransactions);
   empTransactions.push(totalOrderedBeverage);
   return empTransactions;
@@ -41,10 +38,10 @@ const add = function(totalQuantity, order) {
   return totalQuantity;
 };
 
-const displayForSave = function(beverageLogs, empID) {
+const displayForSave = function(beverageRecords, empID) {
   let status = "Transaction Recorded:";
   let title = "EmployeeID, Beverage, Quantity, date";
-  let ordersfields = beverageLogs[empID]["orders"][0];
+  let ordersfields = beverageRecords[empID]["orders"][0];
   let transactionDetail = [
     empID,
     ordersfields["beverage"],
@@ -61,18 +58,36 @@ const convertToString = function(empID) {
   };
 };
 
-const displayForQuery = function(empBeverageLogs, empID) {
+const displayForQuery = function(empbeverageRecords, empID) {
   let title = "EmployeeID, Beverage, Quantity, date";
-  let totalCount = empBeverageLogs.pop();
+  let totalCount = empbeverageRecords.pop();
   let totalJuiceMessage = ["Total:", totalCount, "Juices"].join(" ");
-  let transactionDetail = empBeverageLogs.map(convertToString(empID));
+  let transactionDetail = empbeverageRecords.map(convertToString(empID));
   let transactions = transactionDetail.join("\n");
   let transactionStatus = [title, transactions, totalJuiceMessage].join("\n");
   return transactionStatus;
 };
+const getActionReference = function(referenceKey) {
+  let commands = {
+    "--save": saveTransaction,
+    "--query": fetchTransaction
+  };
+  return commands[referenceKey];
+};
+
+const getDisplayReference = function(referenceKey) {
+  let display = {
+    "--save": displayForSave,
+    "--query": displayForQuery
+  };
+  return display[referenceKey];
+};
+
 exports.saveTransaction = saveTransaction;
 exports.fetchTransaction = fetchTransaction;
 exports.parseArg = parseArg;
 exports.getTotalBeverageCount = getTotalBeverageCount;
 exports.displayForSave = displayForSave;
 exports.displayForQuery = displayForQuery;
+exports.getActionReference = getActionReference;
+exports.getDisplayReference = getDisplayReference;

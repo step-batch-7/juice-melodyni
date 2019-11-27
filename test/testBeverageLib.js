@@ -9,6 +9,26 @@ const getdate = require(file).getdate;
 const displayForSave = require(file).displayForSave;
 const displayForQuery = require(file).displayForQuery;
 const parseArg = require(file).parseArg;
+const getActionReference = require(file).getActionReference;
+const getDisplayReference = require(file).getDisplayReference;
+
+describe("getActionReference", function() {
+  it("should return saveTransaction reference", function() {
+    assert.strictEqual(getActionReference("--save"), saveTransaction);
+  });
+  it("should return FetchTransaction reference", function() {
+    assert.strictEqual(getActionReference("--query"), fetchTransaction);
+  });
+});
+
+describe("getDisplayReference", function() {
+  it("should return saveTransaction reference", function() {
+    assert.strictEqual(getDisplayReference("--save"), displayForSave);
+  });
+  it("should return FetchTransaction reference", function() {
+    assert.strictEqual(getDisplayReference("--query"), displayForQuery);
+  });
+});
 
 describe("parseArg", function() {
   it("should parse arguments into object fields", function() {

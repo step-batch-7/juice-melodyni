@@ -1,30 +1,23 @@
 "use strict";
 let fs = require("fs");
 let date = new Date();
-const saveTransaction = require("./src/beverageLib").saveTransaction;
-const fetchTransaction = require("./src/beverageLib").fetchTransaction;
-const getPaired = require("./src/utilities").getPaired;
-const parseArg = require("./src/beverageLib").parseArg;
-const getValue = require("./src/utilities").getValue;
-const displayForSave = require("./src/beverageLib").displayForSave;
-const displayForQuery = require("./src/beverageLib").displayForQuery;
-const loadBeverageLogs = require("./src/fileUtil").loadBeverageLogs;
+const lib = require("./src/beverageLib");
+const util = require("./src/utilities");
+const loadBeverageTransactions = require("./src/fileUtil")
+  .loadBeverageTransactions;
 
 const main = function() {
-  let commands = { "--save": saveTransaction, "--query": fetchTransaction };
-  let display = { "--save": displayForSave, "--query": displayForQuery };
-
   let operationArg = process.argv.slice(3);
-  let optionWithArg = operationArg.reduce(getPaired, []);
-  let newOrder = parseArg(optionWithArg);
-  let empID = getValue(optionWithArg, "--empID");
+  let optionWithArg = operationArg.reduce(util.getPaired, []);
+  let newOrder = lib.parseArg(optionWithArg);
+  let empID = util.getValue(optionWithArg, "--empID");
 
-  let userCmd = commands[process.argv[2]];
-  let displayTransaction = display[process.argv[2]];
-  let beverageLogs = loadBeverageLogs();
+  let userCmd = lib.getActionReference(process.argv[2]);
+  let displayTransaction = lib.getDisplayReference(process.argv[2]);
+  let beverageRecords = loadBeverageTransactions();
 
-  beverageLogs = userCmd(beverageLogs, empID, newOrder, date);
-  let transactionStatus = displayTransaction(beverageLogs, empID);
+  beverageRecords = userCmd(beverageRecords, empID, newOrder, date);
+  let transactionStatus = displayTransaction(beverageRecords, empID);
   console.log("Anna Juice Ltd");
   console.log(transactionStatus);
 };

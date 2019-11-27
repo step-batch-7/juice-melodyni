@@ -1,13 +1,34 @@
 "use strict";
 const fs = require("fs");
 
-const loadBeverageLogs = function() {
-  let doesFileExists = fs.existsSync("./logs.json");
-  if (!doesFileExists) {
-    return {};
-  }
-  let file = fs.readFileSync("./logs.json", "utf8");
-  let beverageLogs = JSON.parse(file);
-  return beverageLogs;
+const writeOnToFile = function(filePath, beverageRecords) {
+  fs.writeFileSync(filePath, JSON.stringify(beverageRecords), "utf8");
 };
-exports.loadBeverageLogs = loadBeverageLogs;
+
+const readFromFile = function(filePath) {
+  return fs.readFileSync(filePath, "utf8");
+};
+
+const isFileEmpty = function(filePath) {
+  let content = readFromFile(filePath);
+  return content == "";
+};
+
+const doesFileExist = function(filePath) {
+  return fs.existsSync(filePath);
+};
+
+const loadBeverageTransactions = function() {
+  let fileContent = "{}";
+  let filePath = "./logs.json";
+  let fileExistStatus = doesFileExist(filePath);
+  let fileEmptyStatus = isFileEmpty(filePath);
+  if (fileExistStatus && !fileEmptyStatus) {
+    fileContent = readFromFile(filePath);
+  }
+  let beverageRecords = JSON.parse(fileContent);
+  return beverageRecords;
+};
+
+exports.writeOnToFile = writeOnToFile;
+exports.loadBeverageTransactions = loadBeverageTransactions;
