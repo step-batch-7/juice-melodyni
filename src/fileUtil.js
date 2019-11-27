@@ -1,34 +1,34 @@
 "use strict";
 const fs = require("fs");
 
-const writeOnToFile = function(filePath, beverageRecords) {
-  fs.writeFileSync(filePath, JSON.stringify(beverageRecords), "utf8");
+const writeOnToFile = function(fileOperation, beverageRecords) {
+  let fileContent = JSON.stringify(beverageRecords);
+  fileOperation.writer(fileOperation.path, fileContent, fileOperation.code);
 };
 
-const readFromFile = function(filePath) {
-  return fs.readFileSync(filePath, "utf8");
+const readFromFile = function(fileOperation) {
+  return fileOperation.reader(fileOperation.path, fileOperation.code);
 };
 
-const isFileEmpty = function(filePath) {
-  let content = readFromFile(filePath);
+const isFileEmpty = function(fileOperation) {
+  let content = fileOperation.reader(fileOperation.path, fileOperation.code);
   return content == "";
 };
 
-const doesFileExist = function(filePath) {
-  return fs.existsSync(filePath);
+const doesFileExist = function(fileOperation) {
+  return fileOperation.fileExist(fileOperation.path);
 };
 
-const loadBeverageTransactions = function() {
+const LoadTransactions = function(fileOperation) {
   let fileContent = "{}";
-  let filePath = "./logs.json";
-  let fileExistStatus = doesFileExist(filePath);
-  let fileEmptyStatus = isFileEmpty(filePath);
+  let fileExistStatus = doesFileExist(fileOperation);
+  let fileEmptyStatus = isFileEmpty(fileOperation);
   if (fileExistStatus && !fileEmptyStatus) {
-    fileContent = readFromFile(filePath);
+    fileContent = readFromFile(fileOperation);
   }
   let beverageRecords = JSON.parse(fileContent);
   return beverageRecords;
 };
 
 exports.writeOnToFile = writeOnToFile;
-exports.loadBeverageTransactions = loadBeverageTransactions;
+exports.LoadTransactions = LoadTransactions;

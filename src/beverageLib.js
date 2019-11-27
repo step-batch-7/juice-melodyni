@@ -4,25 +4,45 @@ const getPaired = require("./utilities").getPaired;
 const getValue = require("./utilities").getValue;
 const writeOnToFile = require("./fileUtil").writeOnToFile;
 
+const getFileOperation = function() {
+  let fileUtils = {
+    reader: fs.readFileSync,
+    writer: fs.writeFileSync,
+    fileExist: fs.existsSync,
+    path: "./logs.json",
+    code: "utf8"
+  };
+  return fileUtils;
+};
+
+const saveTransaction = function(
+  beverageRecords,
+  newOrder,
+  date,
+  fileOperation
+) {
+  let empNewOrder = {
+    beverage: newOrder["beverage"],
+    quantity: newOrder["quantity"],
+    date: date
+  };
+  if (!beverageRecords.hasOwnProperty(newOrder["empID"])) {
+    beverageRecords[newOrder["empID"]] = { orders: [] };
+  }
+  beverageRecords[newOrder["empID"]]["orders"].push(empNewOrder);
+  writeOnToFile(fileOperation, beverageRecords);
+  return beverageRecords;
+};
 const parseArg = function(optionWithArg) {
   let newOrder = {};
   newOrder["beverage"] = getValue(optionWithArg, "--beverage");
   newOrder["quantity"] = Number(getValue(optionWithArg, "--qty"));
+  newOrder["empID"] = getValue(optionWithArg, "--empID");
   return newOrder;
 };
 
-const saveTransaction = function(beverageRecords, empID, newOrder, date) {
-  newOrder["date"] = date;
-  if (!beverageRecords.hasOwnProperty(empID)) {
-    beverageRecords[empID] = { orders: [] };
-  }
-  beverageRecords[empID]["orders"].push(newOrder);
-  writeOnToFile("./logs.json", beverageRecords);
-  return beverageRecords;
-};
-
-const fetchTransaction = function(beverageRecords, empID) {
-  let empTransactions = beverageRecords[empID]["orders"];
+const fetchTransaction = function(beverageRecords, newOrder) {
+  let empTransactions = beverageRecords[newOrder["empID"]]["orders"];
   let totalOrderedBeverage = getTotalBeverageCount(empTransactions);
   empTransactions.push(totalOrderedBeverage);
   return empTransactions;
@@ -91,3 +111,4 @@ exports.displayForSave = displayForSave;
 exports.displayForQuery = displayForQuery;
 exports.getActionReference = getActionReference;
 exports.getDisplayReference = getDisplayReference;
+exports.getFileOperation = getFileOperation;
