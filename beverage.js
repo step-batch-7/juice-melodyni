@@ -8,7 +8,7 @@ const main = function() {
   let date = new Date();
   let optionWithArg = process.argv.slice(3).reduce(util.getPaired, []);
   let newOrder = lib.parseArg(optionWithArg);
-  let empID = util.getValue(optionWithArg, "--empID");
+  let empId = util.getValue(optionWithArg, "--empId");
 
   let userCmd = lib.getActionReference(process.argv[2]);
   let displayTransaction = lib.getDisplayReference(process.argv[2]);
@@ -16,8 +16,7 @@ const main = function() {
   let beverageRecords = LoadTransactions(fileOperation);
 
   beverageRecords = userCmd(beverageRecords, newOrder, date, fileOperation);
-  let transactionStatus = displayTransaction(beverageRecords, empID);
-  console.log("Anna Juice Ltd\n");
+  let transactionStatus = displayTransaction(beverageRecords, empId);
   console.log(transactionStatus);
 };
 

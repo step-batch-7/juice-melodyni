@@ -22,6 +22,25 @@ const getPaired = function(paired, elm, idx) {
   return paired;
 };
 
+const insertEmpID = function(empId) {
+  return function(order) {
+    order["empId"] = +empId;
+    return order;
+  };
+};
+
+const getAllTransactions = function(beverageRecord) {
+  let allTransactions = [];
+  for (let empId in beverageRecord) {
+    let empTransactions = beverageRecord[empId]["orders"];
+    let empAllTransactions = empTransactions.map(insertEmpID(empId));
+    allTransactions = allTransactions.concat(empAllTransactions);
+  }
+  return allTransactions;
+};
+
 exports.getPaired = getPaired;
 exports.getValue = getValue;
 exports.find = find;
+exports.insertEmpID = insertEmpID;
+exports.getAllTransactions = getAllTransactions;

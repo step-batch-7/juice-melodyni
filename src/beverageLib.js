@@ -3,6 +3,7 @@ const fs = require("fs");
 const getPaired = require("./utilities").getPaired;
 const getValue = require("./utilities").getValue;
 const writeOnToFile = require("./fileUtil").writeOnToFile;
+const getAllTransactions = require("./utilities").getAllTransactions;
 
 const getFileOperation = function() {
   let fileUtils = {
@@ -26,26 +27,43 @@ const saveTransaction = function(
     quantity: newOrder["quantity"],
     date: date
   };
-  if (!beverageRecords.hasOwnProperty(newOrder["empID"])) {
-    beverageRecords[newOrder["empID"]] = { orders: [] };
+  if (!beverageRecords.hasOwnProperty(newOrder["empId"])) {
+    beverageRecords[newOrder["empId"]] = { orders: [] };
   }
-  beverageRecords[newOrder["empID"]]["orders"].push(empNewOrder);
+  beverageRecords[newOrder["empId"]]["orders"].push(empNewOrder);
   writeOnToFile(fileOperation, beverageRecords);
+
   return beverageRecords;
 };
 const parseArg = function(optionWithArg) {
   let newOrder = {};
   newOrder["beverage"] = getValue(optionWithArg, "--beverage");
   newOrder["quantity"] = Number(getValue(optionWithArg, "--qty"));
-  newOrder["empID"] = getValue(optionWithArg, "--empID");
+  newOrder["empId"] = getValue(optionWithArg, "--empId");
+  newOrder["date"] = getValue(optionWithArg, "--date");
   return newOrder;
 };
 
+const filterBy = function(newOrder) {
+  return function(transaction) {
+    let empId = newOrder["empId"] || transaction["empId"];
+    let beverage = newOrder["beverage"] || transaction["beverage"];
+    let date = newOrder["date"] || transaction["date"].slice(0, 10);
+    let quantity = newOrder["quantity"] || transaction["quantity"];
+    const validDate = date == transaction["date"].slice(0, 10);
+    const validEmpID = empId == transaction["empId"];
+    const validBeverage = beverage == transaction["beverage"];
+    const validQuantity = quantity == transaction["quantity"];
+    return validBeverage && validEmpID && validDate && validQuantity;
+  };
+};
+
 const fetchTransaction = function(beverageRecords, newOrder) {
-  let empTransactions = beverageRecords[newOrder["empID"]]["orders"];
-  let totalOrderedBeverage = getTotalBeverageCount(empTransactions);
-  empTransactions.push(totalOrderedBeverage);
-  return empTransactions;
+  let allTransactions = getAllTransactions(beverageRecords);
+  let requiredTransactions = allTransactions.filter(filterBy(newOrder));
+  let totalBeverageCount = getTotalBeverageCount(requiredTransactions);
+  requiredTransactions.push(totalBeverageCount);
+  return requiredTransactions;
 };
 
 const getTotalBeverageCount = function(empTransactions) {
@@ -58,12 +76,12 @@ const add = function(totalQuantity, order) {
   return totalQuantity;
 };
 
-const displayForSave = function(beverageRecords, empID) {
+const displayForSave = function(beverageRecords, empId) {
   let status = "Transaction Recorded:";
   let title = "EmployeeID, Beverage, Quantity, date";
-  let ordersfields = beverageRecords[empID]["orders"][0];
+  let ordersfields = beverageRecords[empId]["orders"][0];
   let transactionDetail = [
-    empID,
+    empId,
     ordersfields["beverage"],
     ordersfields["quantity"],
     ordersfields["date"]
@@ -72,17 +90,20 @@ const displayForSave = function(beverageRecords, empID) {
   return transactionStatus;
 };
 
-const convertToString = function(empID) {
-  return function(order) {
-    return [empID, order.beverage, order.quantity, order.date].join(",");
-  };
+const convertToString = function(transaction) {
+  return [
+    transaction.empId,
+    transaction.beverage,
+    transaction.quantity,
+    transaction.date
+  ].join(",");
 };
 
-const displayForQuery = function(empbeverageRecords, empID) {
+const displayForQuery = function(beverageRecords) {
   let title = "EmployeeID, Beverage, Quantity, date";
-  let totalCount = empbeverageRecords.pop();
+  let totalCount = beverageRecords.pop();
   let totalJuiceMessage = ["Total:", totalCount, "Juices"].join(" ");
-  let transactionDetail = empbeverageRecords.map(convertToString(empID));
+  let transactionDetail = beverageRecords.map(convertToString);
   let transactions = transactionDetail.join("\n");
   let transactionStatus = [title, transactions, totalJuiceMessage].join("\n");
   return transactionStatus;

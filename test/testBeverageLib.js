@@ -1,11 +1,10 @@
 "use strict";
 const fs = require("fs");
 const assert = require("assert");
-let file = "../src/beverageLib";
-const lib = require(file);
+const lib = require("../src/beverageLib");
 
 describe("getFileOperation", function() {
-  it("should give an object of required fs functions,path & encoding", function() {
+  it("should give an object of required fs functions, path & encoding", function() {
     let expected = {
       reader: fs.readFileSync,
       writer: fs.writeFileSync,
@@ -18,19 +17,19 @@ describe("getFileOperation", function() {
 });
 
 describe("getActionReference", function() {
-  it("should return saveTransaction reference", function() {
+  it("should give reference of saveTransaction for --save option", function() {
     assert.strictEqual(lib.getActionReference("--save"), lib.saveTransaction);
   });
-  it("should return FetchTransaction reference", function() {
+  it("should give reference of FetchTransaction for --query option", function() {
     assert.strictEqual(lib.getActionReference("--query"), lib.fetchTransaction);
   });
 });
 
 describe("getDisplayReference", function() {
-  it("should return saveTransaction reference", function() {
+  it("should give reference of displayForSave for --save option", function() {
     assert.strictEqual(lib.getDisplayReference("--save"), lib.displayForSave);
   });
-  it("should return FetchTransaction reference", function() {
+  it("should give reference of displayforQuery for --query option ", function() {
     assert.strictEqual(lib.getDisplayReference("--query"), lib.displayForQuery);
   });
 });
@@ -40,13 +39,15 @@ describe("parseArg", function() {
     let userArg = [
       ["--beverage", "orange"],
       ["--qty", "1"],
-      ["--empID", 123]
+      ["--empId", 123],
+      ["--date", "2019-11-28"]
     ];
     let actual = lib.parseArg(userArg);
     let expected = {
       beverage: "orange",
       quantity: 1,
-      empID: 123
+      empId: 123,
+      date: "2019-11-28"
     };
     assert.deepStrictEqual(actual, expected);
   });
@@ -66,11 +67,11 @@ describe("saveTransaction", function() {
     path: "path",
     code: "utf8"
   };
-  it("should make another Object for non existing employee", function() {
+  it("should make another object of transaction for non existing employee", function() {
     let newOrder = {
       beverage: "orange",
       quantity: 1,
-      empID: 111
+      empId: 111
     };
     let actual = lib.saveTransaction({}, newOrder, mockDate, fileOperation);
     let expected = {
@@ -88,7 +89,7 @@ describe("saveTransaction", function() {
     assert.strictEqual(writerIsCalled, 1);
     writerIsCalled = 0;
   });
-  it("should add current order with the existing operationArg for existing employee", function() {
+  it("should add current transaction with previous record for existing employee", function() {
     let existingoperationArg = {
       123: {
         orders: [{ beverage: "orange", quantity: 1, date: "11:00" }]
@@ -98,7 +99,7 @@ describe("saveTransaction", function() {
     let newOrder = {
       beverage: "watermelon",
       quantity: 2,
-      empID: 123
+      empId: 123
     };
     let actual = lib.saveTransaction(
       existingoperationArg,
@@ -130,21 +131,21 @@ describe("getTotalBeverageCount", function() {
     { beverage: "orange", quantity: 2 }
   ];
   let actual = lib.getTotalBeverageCount(logs);
-  it("should add field quantity of each object of given array", function() {
+  it("should give the total beverage count", function() {
     assert.strictEqual(actual, 4);
   });
 });
 
 describe("fetchTransaction", function() {
-  it("should give order and totalBeverageCount details of given employee", function() {
+  it("should club all transaction details on given empID ", function() {
     let logs = {
-      123: {
+      111: {
         orders: [
           { beverage: "watermelon", quantity: 2, date: "12:45" },
           { beverage: "watermelon", quantity: 1, date: "1:12" }
         ]
       },
-      111: {
+      123: {
         orders: [
           { beverage: "orange", quantity: 2, date: "12:45" },
           { beverage: "watermelon", quantity: 1, date: "1:12" }
@@ -152,18 +153,42 @@ describe("fetchTransaction", function() {
       }
     };
     let expected = [
-      { beverage: "orange", quantity: 2, date: "12:45" },
-      { beverage: "watermelon", quantity: 1, date: "1:12" },
+      { beverage: "orange", quantity: 2, date: "12:45", empId: 123 },
+      { beverage: "watermelon", quantity: 1, date: "1:12", empId: 123 },
       3
     ];
-    let empDetail = { empID: 111 };
-    let actual = lib.fetchTransaction(logs, empDetail);
+    let filterByOption = { empId: 123 };
+    let actual = lib.fetchTransaction(logs, filterByOption);
+    assert.deepStrictEqual(actual, expected);
+  });
+  it("should club all transaction details on given beverage ", function() {
+    let orderDetails = {
+      111: {
+        orders: [
+          { beverage: "watermelon", quantity: 2, date: "12:45" },
+          { beverage: "orange", quantity: 1, date: "1:12" }
+        ]
+      },
+      123: {
+        orders: [
+          { beverage: "orange", quantity: 2, date: "12:45" },
+          { beverage: "watermelon", quantity: 1, date: "1:12" }
+        ]
+      }
+    };
+    let expected = [
+      { beverage: "watermelon", quantity: 2, date: "12:45", empId: 111 },
+      { beverage: "watermelon", quantity: 1, date: "1:12", empId: 123 },
+      3
+    ];
+    let filterByOption = { beverage: "watermelon" };
+    let actual = lib.fetchTransaction(orderDetails, filterByOption);
     assert.deepStrictEqual(actual, expected);
   });
 });
 
 describe("displayForSave", function() {
-  it("should return order fields in string", function() {
+  it("should give order fields in string", function() {
     let logs = {
       "123": {
         orders: [{ beverage: "orange", quantity: 1, date: "11:00" }]
@@ -185,15 +210,15 @@ describe("displayForSave", function() {
 });
 
 describe("displayForQuery", function() {
-  it("should display all transactions of given employee with total beverage count", function() {
+  it("should give transactions with total beverage count in string", function() {
     let orderList = [
-      { beverage: "orange", quantity: 1, date: "11:00" },
-      { beverage: "watermelon", quantity: 2, date: "12:34" },
+      { beverage: "orange", quantity: 1, date: "11:00", empId: 222 },
+      { beverage: "watermelon", quantity: 2, date: "12:34", empId: 111 },
       3
     ];
-    let actual = lib.displayForQuery(orderList, 123);
+    let actual = lib.displayForQuery(orderList);
     let title = "EmployeeID, Beverage, Quantity, date";
-    let transactions = "123,orange,1,11:00\n123,watermelon,2,12:34";
+    let transactions = "222,orange,1,11:00\n111,watermelon,2,12:34";
     let totalJuiceMessage = ["Total:", 3, "Juices"].join(" ");
     let expected = [title, transactions, totalJuiceMessage].join("\n");
     assert.strictEqual(actual, expected);
