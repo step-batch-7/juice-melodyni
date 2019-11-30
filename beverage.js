@@ -16,8 +16,7 @@ const main = function() {
   let beverageRecords = LoadTransactions(fileOperation);
 
   beverageRecords = userCmd(beverageRecords, newOrder, date, fileOperation);
-  let transactionStatus = displayTransaction(beverageRecords, empId);
-  console.log(transactionStatus);
+  console.log(beverageRecords);
 };
 
 main();

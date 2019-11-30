@@ -32,8 +32,8 @@ const saveTransaction = function(
   }
   beverageRecords[newOrder["empId"]]["orders"].push(empNewOrder);
   writeOnToFile(fileOperation, beverageRecords);
-
-  return beverageRecords;
+  let transaction = displayForSave(newOrder, date);
+  return transaction;
 };
 const parseArg = function(optionWithArg) {
   let newOrder = {};
@@ -63,7 +63,8 @@ const fetchTransaction = function(beverageRecords, newOrder) {
   let requiredTransactions = allTransactions.filter(filterBy(newOrder));
   let totalBeverageCount = getTotalBeverageCount(requiredTransactions);
   requiredTransactions.push(totalBeverageCount);
-  return requiredTransactions;
+  let transactions = displayForQuery(requiredTransactions);
+  return transactions;
 };
 
 const getTotalBeverageCount = function(empTransactions) {
@@ -76,15 +77,14 @@ const add = function(totalQuantity, order) {
   return totalQuantity;
 };
 
-const displayForSave = function(beverageRecords, empId) {
+const displayForSave = function(newOrder, date) {
   let status = "Transaction Recorded:";
   let title = "EmployeeID, Beverage, Quantity, date";
-  let ordersfields = beverageRecords[empId]["orders"][0];
   let transactionDetail = [
-    empId,
-    ordersfields["beverage"],
-    ordersfields["quantity"],
-    ordersfields["date"]
+    newOrder.empId,
+    newOrder.beverage,
+    newOrder.quantity,
+    date.toJSON()
   ].join(",");
   let transactionStatus = [status, title, transactionDetail].join("\n");
   return transactionStatus;
@@ -104,8 +104,9 @@ const displayForQuery = function(beverageRecords) {
   let totalCount = beverageRecords.pop();
   let totalJuiceMessage = ["Total:", totalCount, "Juices"].join(" ");
   let transactionDetail = beverageRecords.map(convertToString);
-  let transactions = transactionDetail.join("\n");
-  let transactionStatus = [title, transactions, totalJuiceMessage].join("\n");
+  let transactionStatus = [title, ...transactionDetail, totalJuiceMessage].join(
+    "\n"
+  );
   return transactionStatus;
 };
 const getActionReference = function(referenceKey) {
