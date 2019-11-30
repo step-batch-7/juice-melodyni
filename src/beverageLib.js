@@ -10,7 +10,7 @@ const getFileOperation = function() {
     reader: fs.readFileSync,
     writer: fs.writeFileSync,
     fileExist: fs.existsSync,
-    path: "./logs.json",
+    path: process.env.path || "./logs.json",
     code: "utf8"
   };
   return fileUtils;

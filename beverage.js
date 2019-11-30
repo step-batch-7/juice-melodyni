@@ -5,7 +5,8 @@ const util = require("./src/utilities");
 const LoadTransactions = require("./src/fileUtil").LoadTransactions;
 
 const main = function() {
-  let date = new Date();
+  let date = process.env.date || new Date().toJSON();
+  date = new Date(date);
   let optionWithArg = process.argv.slice(3).reduce(util.getPaired, []);
   let newOrder = lib.parseArg(optionWithArg);
   let empId = util.getValue(optionWithArg, "--empId");
