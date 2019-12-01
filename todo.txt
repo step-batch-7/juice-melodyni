@@ -7,6 +7,6 @@
 ✔ remove govinda date testing.
 ✔ write mock test for file related functions.
 ✔ add function which can filterBy empID, date, beverage.
+✔ added apptest for query and save.
 * refactor code 
-* write apptest
 * validate input  

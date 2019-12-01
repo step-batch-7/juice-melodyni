@@ -1,11 +1,6 @@
 {
-  "11111": {
+  "55555": {
     "orders": [
-      {
-        "beverage": "Orange",
-        "quantity": 1,
-        "date": "2019-11-30T00:00:00.000Z"
-      },
       {
         "beverage": "Orange",
         "quantity": 1,

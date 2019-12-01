@@ -1,4 +1,4 @@
-(export path="./appTest/JUICE_MELODYNI.json";export date="2019-11-30";node beverage.js --save --beverage Orange --empId 11111 --qty 1)
+(export path="./appTest/JUICE_MELODYNI_WRITE_ONLY.json";export date="2019-11-30";node beverage.js --save --beverage Orange --empId 11111 --qty 1)
 Transaction Recorded:
 EmployeeID, Beverage, Quantity, date
 11111,Orange,1,2019-11-30T00:00:00.000Z
