@@ -5,12 +5,12 @@ const getValue = require("./utilities").getValue;
 const writeOnToFile = require("./fileUtil").writeOnToFile;
 const getAllTransactions = require("./utilities").getAllTransactions;
 
-const getFileOperation = function() {
+const getFileOperation = function(filePath) {
   let fileUtils = {
     reader: fs.readFileSync,
     writer: fs.writeFileSync,
     fileExist: fs.existsSync,
-    path: process.env.path || "./logs.json",
+    path: filePath,
     code: "utf8"
   };
   return fileUtils;

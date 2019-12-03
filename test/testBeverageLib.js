@@ -12,7 +12,7 @@ describe("getFileOperation", function() {
       path: "./logs.json",
       code: "utf8"
     };
-    assert.deepStrictEqual(lib.getFileOperation(), expected);
+    assert.deepStrictEqual(lib.getFileOperation("./logs.json"), expected);
   });
 });
 

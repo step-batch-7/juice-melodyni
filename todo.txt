@@ -9,5 +9,7 @@
 ✔ add function which can filterBy empID, date, beverage.
 ✔ added apptest for query and save.
 ✔ added apptest for query by empID and date.
-* refactor code 
+✔ added apptest for query by beverage.
+✔ added config and its test file.
 * validate input  
+* refactor code 
