@@ -1,0 +1,3 @@
+(export path="./appTest/JUICE_MELODYNI_READ_ONLY.json";node beverage.js --query --empId 99999)
+EmployeeID, Beverage, Quantity, date
+Total: 0 Juice
