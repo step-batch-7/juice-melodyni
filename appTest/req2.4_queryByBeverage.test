@@ -1,0 +1,4 @@
+(export path="./appTest/JUICE_MELODYNI_READ_ONLY.json";node beverage.js --query --beverage Watermelon)
+EmployeeID, Beverage, Quantity, date
+12345,Watermelon,1,2019-11-30T00:00:00.000Z
+Total: 1 Juice
