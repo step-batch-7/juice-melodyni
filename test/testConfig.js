@@ -1,3 +1,4 @@
+"use strict";
 const config = require("../src/config");
 const assert = require("assert");
 const { timeStamp, getDataStorePath } = config;
@@ -12,7 +13,7 @@ describe("getDataStorePath", function() {
   });
   it("should give default path when not configured", () => {
     const env = {};
-    assert.strictEqual(getDataStorePath(env), "../logs.json");
+    assert.strictEqual(getDataStorePath(env), "./logs.json");
   });
 });
 

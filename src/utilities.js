@@ -1,5 +1,4 @@
 "use strict";
-
 const find = function(table, key) {
   return table.find(function(e) {
     return e[0] == key;

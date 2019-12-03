@@ -1,3 +1,4 @@
+"use strict";
 const getDataStorePath = env => env.path || "./logs.json";
 const timeStamp = env => {
   const stubbedDate = new Date(env.date);
