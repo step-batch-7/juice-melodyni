@@ -11,5 +11,5 @@
 ✔ added apptest for query by empID and date.
 ✔ added apptest for query by beverage.
 ✔ added config and its test file.
-* validate input  
+✔ validate input  
 * refactor code 

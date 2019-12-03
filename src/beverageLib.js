@@ -4,6 +4,7 @@ const getPaired = require("./utilities").getPaired;
 const getValue = require("./utilities").getValue;
 const writeOnToFile = require("./fileUtil").writeOnToFile;
 const getAllTransactions = require("./utilities").getAllTransactions;
+const validation = require("./inputOptionValidation");
 
 const getFileOperation = function(filePath) {
   let fileUtils = {
@@ -113,20 +114,20 @@ const displayForQuery = function(beverageRecords) {
   );
   return transactionStatus;
 };
-const getActionReference = function(referenceKey) {
-  let commands = {
-    "--save": saveTransaction,
-    "--query": fetchTransaction
-  };
-  return commands[referenceKey];
+
+const errorMsg = function() {
+  return "Invalid Input";
 };
 
-const getDisplayReference = function(referenceKey) {
-  let display = {
-    "--save": displayForSave,
-    "--query": displayForQuery
-  };
-  return display[referenceKey];
+const getActionReference = function(userArg) {
+  if (validation.isInputValid(userArg)) {
+    let commands = {
+      "--save": saveTransaction,
+      "--query": fetchTransaction
+    };
+    return commands[userArg[0]];
+  }
+  return errorMsg;
 };
 
 exports.saveTransaction = saveTransaction;
@@ -136,5 +137,4 @@ exports.getTotalBeverageCount = getTotalBeverageCount;
 exports.displayForSave = displayForSave;
 exports.displayForQuery = displayForQuery;
 exports.getActionReference = getActionReference;
-exports.getDisplayReference = getDisplayReference;
 exports.getFileOperation = getFileOperation;

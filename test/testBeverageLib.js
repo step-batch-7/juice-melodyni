@@ -18,19 +18,24 @@ describe("getFileOperation", function() {
 
 describe("getActionReference", function() {
   it("should give reference of saveTransaction for --save option", function() {
-    assert.strictEqual(lib.getActionReference("--save"), lib.saveTransaction);
+    assert.strictEqual(
+      lib.getActionReference([
+        "--save",
+        "--beverage",
+        "orange",
+        "--empId",
+        "1234",
+        "--qty",
+        "1"
+      ]),
+      lib.saveTransaction
+    );
   });
   it("should give reference of FetchTransaction for --query option", function() {
-    assert.strictEqual(lib.getActionReference("--query"), lib.fetchTransaction);
-  });
-});
-
-describe("getDisplayReference", function() {
-  it("should give reference of displayForSave for --save option", function() {
-    assert.strictEqual(lib.getDisplayReference("--save"), lib.displayForSave);
-  });
-  it("should give reference of displayforQuery for --query option ", function() {
-    assert.strictEqual(lib.getDisplayReference("--query"), lib.displayForQuery);
+    assert.strictEqual(
+      lib.getActionReference(["--query", "--empId", "1234"]),
+      lib.fetchTransaction
+    );
   });
 });
 

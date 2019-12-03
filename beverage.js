@@ -12,8 +12,7 @@ const main = function() {
   let newOrder = lib.parseArg(optionWithArg);
   let empId = util.getValue(optionWithArg, "--empId");
 
-  let userCmd = lib.getActionReference(process.argv[2]);
-  let displayTransaction = lib.getDisplayReference(process.argv[2]);
+  let userCmd = lib.getActionReference(process.argv.slice(2));
   let fileOperation = lib.getFileOperation(filePath);
   let beverageRecords = LoadTransactions(fileOperation);
 
