@@ -8,5 +8,6 @@
 ✔ write mock test for file related functions.
 ✔ add function which can filterBy empID, date, beverage.
 ✔ added apptest for query and save.
+✔ added apptest for query by empID and date.
 * refactor code 
 * validate input  

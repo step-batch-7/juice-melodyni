@@ -103,6 +103,10 @@ const displayForQuery = function(beverageRecords) {
   let title = "EmployeeID, Beverage, Quantity, date";
   let totalCount = beverageRecords.pop();
   let totalJuiceMessage = ["Total:", totalCount, "Juices"].join(" ");
+  if (totalCount < 2) {
+    totalJuiceMessage = ["Total:", totalCount, "Juice"].join(" ");
+  }
+
   let transactionDetail = beverageRecords.map(convertToString);
   let transactionStatus = [title, ...transactionDetail, totalJuiceMessage].join(
     "\n"

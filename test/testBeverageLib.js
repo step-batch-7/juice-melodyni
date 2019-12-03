@@ -199,4 +199,16 @@ describe("displayForQuery", function() {
     let expected = [title, transactions, totalJuiceMessage].join("\n");
     assert.strictEqual(actual, expected);
   });
+  it("should give transactions with total beverage count and should display Juice if count is 1 or 0 ", function() {
+    let orderList = [
+      { beverage: "orange", quantity: 1, date: "11:00", empId: 222 },
+      1
+    ];
+    let actual = lib.displayForQuery(orderList);
+    let title = "EmployeeID, Beverage, Quantity, date";
+    let transactions = "222,orange,1,11:00";
+    let totalJuiceMessage = ["Total:", 1, "Juice"].join(" ");
+    let expected = [title, transactions, totalJuiceMessage].join("\n");
+    assert.strictEqual(actual, expected);
+  });
 });
